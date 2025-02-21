@@ -82,6 +82,7 @@ public class Trabalho{
             System.out.println("1 - Criar Time");
             System.out.println("2 - Remover Time");
             System.out.println("3 - Buscar Time");
+            System.out.println("4 - Ativar Time");
             System.out.println("0 - Voltar");
             int escolha = scanner.nextInt();
             scanner.nextLine(); 
@@ -96,6 +97,8 @@ public class Trabalho{
                 case 3:
                     buscarTime();
                     break;
+                case 4:
+                    ativarTime();
                 case 0:
                     continua = true;
                     break;
@@ -149,7 +152,7 @@ public class Trabalho{
     private static void buscarTime() {
         System.out.println("Digite o nome do time:");
         String nome = scanner.nextLine();
-        List<Time> times = timeService.buscarTimesPorNome(nome);
+        List<Time> times = timeService.buscarTimesPorNomeAtivo(nome);
         if (times.isEmpty()) {
             System.out.println("Nenhum time encontrado com esse nome.");
         } else {
@@ -172,6 +175,7 @@ public class Trabalho{
                     System.out.println("Escolha uma opcao:");
                     System.out.println("1 - Excluir Time");
                     System.out.println("2 - Ver Jogadores");
+                    System.out.println("3 - Desativar Time");
                     System.out.println("0 - Voltar");
                     int opcao = scanner.nextInt();
                     scanner.nextLine(); 
@@ -191,12 +195,52 @@ public class Trabalho{
                         case 2:
                             timeService.mostrarJogadoresDoTime(time.getId());
                             break;
+                        case 3:
+                            System.out.println("Confirmar desativacao? (s/n)");
+                            String desativa = scanner.nextLine();
+                            if (desativa.equalsIgnoreCase("s")) {
+                                timeService.desativarTime(time.getId());
+                                System.out.println("Time desativado com sucesso!");
+                                colocacaoService.atualizarClassificacao();
+                                continua = false;
+                            } else {
+                                System.out.println("Desativacao cancelada.");
+                            }
                         case 0:
                             continua = false;
                             break;
                         default:
                             System.out.println("Opcao invalida!");
                     }
+                }
+            } else {
+                System.out.println("Escolha invalida!");
+            }
+        }
+    }
+    
+    private static void ativarTime() {
+        System.out.println("Digite o nome do time:");
+        String nome = scanner.nextLine();
+        List<Time> times = timeService.buscarTimesPorNomeDesativo(nome);
+        if (times.isEmpty()) {
+            System.out.println("Nenhum time encontrado com esse nome.");
+        } else {
+            System.out.println("Escolha o time para ativar:");
+            for (int i = 0; i < times.size(); i++) {
+                System.out.println((i + 1) + " - " + times.get(i).getNome());
+            }
+            int escolha = scanner.nextInt();
+            scanner.nextLine(); 
+            if (escolha > 0 && escolha <= times.size()) {
+                System.out.println("Confirmar ativacao? (s/n)");
+                String confirma = scanner.nextLine();
+                if (confirma.equalsIgnoreCase("s")) {
+                    timeService.ativarTime(times.get(escolha - 1).getId());
+                    System.out.println("Time ativado com sucesso!");
+                    colocacaoService.atualizarClassificacao();
+                } else {
+                    System.out.println("Ativacao cancelada.");
                 }
             } else {
                 System.out.println("Escolha invalida!");
@@ -211,6 +255,7 @@ public class Trabalho{
             System.out.println("1 - Adicionar Jogador");
             System.out.println("2 - Remover Jogador");
             System.out.println("3 - Buscar Jogador");
+            System.out.println("4 - Ativar Jogador");
             System.out.println("0 - Voltar");
             int escolha = scanner.nextInt();
             scanner.nextLine();
@@ -225,6 +270,9 @@ public class Trabalho{
                 case 3:
                     buscarJogador();
                     break;
+                case 4:
+                    ativarJogador();
+                    break;    
                 case 0:
                     continua = false;
                     break;
@@ -317,7 +365,7 @@ public class Trabalho{
     private static void buscarJogador() {
         System.out.println("Digite o nome do jogador:");
         String nome = scanner.nextLine();
-        List<Jogador> jogadores = jogadorService.buscarJogadorPorNome(nome);
+        List<Jogador> jogadores = jogadorService.buscarJogadorPorNomeAtivo(nome);
         if (jogadores.isEmpty()) {
             System.out.println("Nenhum jogador encontrado com esse nome.");
         } else {
@@ -361,11 +409,22 @@ public class Trabalho{
                             System.out.println("Confirmar desativacao? (s/n)");
                             String desativar = scanner.nextLine();
                             if (desativar.equalsIgnoreCase("s")) {
-                                jogadorService.removerJogador(jogador.getId());
-                                System.out.println("Jogador excluido com sucesso!");
+                                jogadorService.desativarJogador(jogador.getId());
+                                System.out.println("Jogador desativado com sucesso!");
                                 continua = false;
                             } else {
-                                System.out.println("Exclusao cancelada.");
+                                System.out.println("Desativacao cancelada.");
+                            }
+                            break;
+                        case 3:
+                            System.out.println("Confirmar ativacao? (s/n)");
+                            String ativar = scanner.nextLine();
+                            if (ativar.equalsIgnoreCase("s")) {
+                                jogadorService.ativarJogador(jogador.getId());
+                                System.out.println("Jogador ativado com sucesso!");
+                                continua = false;
+                            } else {
+                                System.out.println("ativacao cancelada.");
                             }
                             break;
                         case 0:
@@ -380,6 +439,37 @@ public class Trabalho{
             }
         }
     }
+    
+    
+    private static void ativarJogador() {
+        System.out.println("Digite o nome do jogador:");
+        String nome = scanner.nextLine();
+        List<Jogador> jogadores = jogadorService.buscarJogadorPorNomeDesativo(nome);
+        if (jogadores.isEmpty()) {
+            System.out.println("Nenhum jogador encontrado com esse nome.");
+        } else {
+            System.out.println("Escolha o jogador para ativar:");
+            for (int i = 0; i < jogadores.size(); i++) {
+                System.out.println((i + 1) + " - " + jogadores.get(i).getNome());
+            }
+            int escolha = scanner.nextInt();
+            scanner.nextLine(); 
+            if (escolha > 0 && escolha <= jogadores.size()) {
+                System.out.println("Confirmar ativacao? (s/n)");
+                String confirma = scanner.nextLine();
+                if (confirma.equalsIgnoreCase("s")) {
+                    jogadorService.ativarJogador(jogadores.get(escolha - 1).getId());
+                    System.out.println("Jogador ativado com sucesso!");
+                } else {
+                    System.out.println("Ativacao cancelada.");
+                }
+            } else {
+                System.out.println("Escolha invalida!");
+            }
+        }
+    }
+    
+    
 
     private static void areaColocacao() {
         boolean continua = true;
@@ -619,34 +709,35 @@ public class Trabalho{
             System.out.println("Digite o nome do jogador que marcou o gol " + (i + 1) + ":");
             String nomeJogador = scanner.nextLine();
 
-            
-            List<Jogador> jogadoresEncontrados = new ArrayList<>();
-            jogadoresEncontrados.addAll(jogadorService.buscarJogadorPorNome(nomeJogador).stream()
-                    .filter(j -> j.getTime().equals(timeCasa) || j.getTime().equals(timeVisitante))
-                    .collect(Collectors.toList()));
+            if(!nomeJogador.equalsIgnoreCase("contra")){
+                List<Jogador> jogadoresEncontrados = new ArrayList<>();
+                jogadoresEncontrados.addAll(jogadorService.buscarJogadorPorNome(nomeJogador).stream()
+                        .filter(j -> j.getTime().equals(timeCasa) || j.getTime().equals(timeVisitante))
+                        .collect(Collectors.toList()));
 
-            if (jogadoresEncontrados.isEmpty()) {
-                System.out.println("Nenhum jogador encontrado com esse nome nos times envolvidos.");
-                i--; 
-            } else {
-                System.out.println("Escolha o jogador:");
-                for (int j = 0; j < jogadoresEncontrados.size(); j++) {
-                    System.out.println((j + 1) + " - " + jogadoresEncontrados.get(j).getNome() + " (" + jogadoresEncontrados.get(j).getTime().getNome() + ")");
-                }
-                int escolha = scanner.nextInt();
-                scanner.nextLine();
-
-                if (escolha > 0 && escolha <= jogadoresEncontrados.size()) {
-                    Jogador jogador = jogadoresEncontrados.get(escolha - 1);
-                    jogadoresGols.add(jogador);
-
-                    
-                    jogador.setGols(jogador.getGols() + 1);
-                    jogadorService.adicionarGolJogador(jogador);
-                    System.out.println("Gol adicionado para " + jogador.getNome() + "!");
+                if (jogadoresEncontrados.isEmpty()) {
+                    System.out.println("Nenhum jogador encontrado com esse nome nos times envolvidos.");
+                    i--; 
                 } else {
-                    System.out.println("Escolha invalida!");
-                    i--;
+                    System.out.println("Escolha o jogador:");
+                    for (int j = 0; j < jogadoresEncontrados.size(); j++) {
+                        System.out.println((j + 1) + " - " + jogadoresEncontrados.get(j).getNome() + " (" + jogadoresEncontrados.get(j).getTime().getNome() + ")");
+                    }
+                    int escolha = scanner.nextInt();
+                    scanner.nextLine();
+
+                    if (escolha > 0 && escolha <= jogadoresEncontrados.size()) {
+                        Jogador jogador = jogadoresEncontrados.get(escolha - 1);
+                        jogadoresGols.add(jogador);
+
+
+                        jogador.setGols(jogador.getGols() + 1);
+                        jogadorService.adicionarGolJogador(jogador);
+                        System.out.println("Gol adicionado para " + jogador.getNome() + "!");
+                    } else {
+                        System.out.println("Escolha invalida!");
+                        i--;
+                    }
                 }
             }
         }
@@ -748,28 +839,9 @@ public class Trabalho{
     }
 
     private static void adicionarExpulsao() {
-        System.out.println("Digite o nome do jogador:");
-        String nomeJogador = scanner.nextLine();
-        List<Jogador> jogadores = jogadorService.buscarJogadorPorNome(nomeJogador);
-        if (jogadores.isEmpty()) {
-            System.out.println("Nenhum jogador encontrado com esse nome.");
-            return;
-        }
-        System.out.println("Escolha o jogador:");
-        for (int i = 0; i < jogadores.size(); i++) {
-            System.out.println((i + 1) + " - " + jogadores.get(i).getNome());
-        }
-        int escolhaJogador = scanner.nextInt();
-        scanner.nextLine(); 
-        if (escolhaJogador <= 0 || escolhaJogador > jogadores.size()) {
-            System.out.println("Escolha invalida!");
-            return;
-        }
-        Jogador jogador = jogadores.get(escolhaJogador - 1);
-
         System.out.println("Digite o nome do time:");
         String nomeTime = scanner.nextLine();
-        List<Time> times = timeService.buscarTimesPorNome(nomeTime);
+        List<Time> times = timeService.buscarTimesPorNomeAtivo(nomeTime);
         if (times.isEmpty()) {
             System.out.println("Nenhum time encontrado com esse nome.");
             return;
@@ -785,6 +857,25 @@ public class Trabalho{
             return;
         }
         Time time = times.get(escolhaTime - 1);
+        
+        System.out.println("Digite o nome do jogador:");
+        String nomeJogador = scanner.nextLine();
+        List<Jogador> jogadores = jogadorService.buscarJogadorPorNomeAtivo(nomeJogador);
+        if (jogadores.isEmpty()) {
+            System.out.println("Nenhum jogador encontrado com esse nome.");
+            return;
+        }
+        System.out.println("Escolha o jogador:");
+        for (int i = 0; i < jogadores.size(); i++) {
+            System.out.println((i + 1) + " - " + jogadores.get(i).getNome());
+        }
+        int escolhaJogador = scanner.nextInt();
+        scanner.nextLine(); 
+        if (escolhaJogador <= 0 || escolhaJogador > jogadores.size()) {
+            System.out.println("Escolha invalida!");
+            return;
+        }
+        Jogador jogador = jogadores.get(escolhaJogador - 1);
 
         System.out.println("Digite o ID da partida:");
         Long partidaId = scanner.nextLong();
