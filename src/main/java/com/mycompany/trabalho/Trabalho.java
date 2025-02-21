@@ -139,6 +139,7 @@ public class Trabalho{
                 String confirma = scanner.nextLine();
                 if (confirma.equalsIgnoreCase("s")) {
                     timeService.removerTime(times.get(escolha - 1).getId());
+                    colocacaoService.atualizarClassificacao();
                     System.out.println("Time removido com sucesso!");
                 } else {
                     System.out.println("Remocao cancelada.");

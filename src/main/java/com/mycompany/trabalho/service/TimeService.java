@@ -11,13 +11,20 @@ import com.mycompany.trabalho.model.Jogador;
 import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.mycompany.trabalho.dao.PartidaDAO;
+import com.mycompany.trabalho.model.Partida;
+import com.mycompany.trabalho.dao.ColocacaoDAO;
 
 public class TimeService {
 
     private TimeDAO timeDAO;
+    private PartidaDAO partidaDAO;
+    private ColocacaoDAO colocacaoDAO;
 
     public TimeService(EntityManager em) {
         this.timeDAO = new TimeDAO(em);
+        this.partidaDAO = new PartidaDAO(em);
+        this.colocacaoDAO = new ColocacaoDAO(em);
     }
 
     public void adicionarTime(String nome) {
@@ -73,6 +80,12 @@ public class TimeService {
     }
 
     public void removerTime(Long id) {
+        List<Partida> partidas = partidaDAO.listarTodas();
+        List<Partida> partidasFiltradas = partidas.stream().filter(partida -> partida.getTimeCasa().getId().equals(id) || partida.getTimeVisitante().getId().equals(id)).collect(Collectors.toList());
+        for(int i=0; i < partidasFiltradas.size();i++){
+            partidaDAO.remover(partidasFiltradas.get(i).getId());
+        }
+        colocacaoDAO.limparTabela();
         timeDAO.remover(id);
     }
     
