@@ -10,6 +10,7 @@ import com.mycompany.trabalho.model.Time;
 import com.mycompany.trabalho.model.Jogador;
 import jakarta.persistence.EntityManager;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TimeService {
 
@@ -51,7 +52,9 @@ public class TimeService {
         Time time = timeDAO.buscarPorId(timeId);
         if (time != null) {
             System.out.println("Jogadores do Time: " + time.getNome());
-            List<Jogador> jogadores = time.getJogadores();
+            List<Jogador> todosJogadores = time.getJogadores();
+            
+            List<Jogador> jogadores = todosJogadores.stream().filter(Jogador::getAtivo).collect(Collectors.toList()); 
 
             
             if (jogadores == null || jogadores.isEmpty()) {
@@ -106,5 +109,21 @@ public class TimeService {
     
     public void adicionarJogadorTime(Time time){
         timeDAO.atualizar(time);
+    }
+    
+    public List<Time> buscarTimesPorNomeAtivo(String nome) {
+        return timeDAO.buscarPorNome(nome).stream().filter(Time::getAtivo).collect(Collectors.toList());
+    }
+    
+    public List<Time> buscarTimesPorNomeDesativo(String nome) {
+        return timeDAO.buscarPorNome(nome).stream().filter(time -> !time.getAtivo()).collect(Collectors.toList());
+    }
+    
+    public void desativarTime(Long id){
+        timeDAO.desativar(id);
+    }
+    
+    public void ativarTime(Long id){
+        timeDAO.ativar(id);
     }
 }

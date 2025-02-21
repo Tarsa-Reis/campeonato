@@ -17,6 +17,7 @@ import jakarta.persistence.EntityManager;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class JogadorService{
 
@@ -63,7 +64,11 @@ public class JogadorService{
         jogadorDAO.remover(id);
     }
     public void desativarJogador(Long id){
-        
+        jogadorDAO.desativar(id);
+    }
+    
+    public void ativarJogador(Long id){
+        jogadorDAO.ativar(id);
     }
 
     public void atualizarJogador(Long id, String nome, int numeroCamisa, LocalDate dataNascimento, Long timeId) {
@@ -90,5 +95,14 @@ public class JogadorService{
     
     public void adicionarGolJogador(Jogador jogador){
         jogadorDAO.atualizar(jogador);
+    }
+    
+    
+    public List<Jogador> buscarJogadorPorNomeAtivo(String nome) {
+        return jogadorDAO.buscarPorNome(nome).stream().filter(Jogador::getAtivo).collect(Collectors.toList());
+    }
+    
+    public List<Jogador> buscarJogadorPorNomeDesativo(String nome) {
+        return jogadorDAO.buscarPorNome(nome).stream().filter(jogador -> !jogador.getAtivo()).collect(Collectors.toList());
     }
 }

@@ -166,6 +166,14 @@ public class Time {
     public void setEmpates(int empates) {
         this.empates = empates;
     }
+    
+    public boolean getAtivo(){
+        return ativo;
+    }
+    
+    public void setAtivo(boolean ativo){
+        this.ativo = ativo;
+    }
 
     @Override
     public String toString() {

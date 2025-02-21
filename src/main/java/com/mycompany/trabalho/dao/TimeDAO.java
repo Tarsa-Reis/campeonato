@@ -52,4 +52,21 @@ public class TimeDAO {
             em.getTransaction().commit();
         }
     }
+    
+    public void ativar(Long id){
+        Time time = em.find(Time.class, id);
+        time.setAtivo(true);
+        em.getTransaction().begin();
+        em.merge(time);
+        em.getTransaction().commit();
+    }
+    
+    
+    public void desativar(Long id){
+        Time time = em.find(Time.class, id);
+        time.setAtivo(false);
+        em.getTransaction().begin();
+        em.merge(time);
+        em.getTransaction().commit();
+    }
 }

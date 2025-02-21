@@ -31,8 +31,7 @@ public class ColocacaoService {
                         .comparingInt(Time::getPontos).reversed()
                         .thenComparingInt(Time::getVitorias).reversed()
                         .thenComparingInt(Time::getNGols).reversed()
-                )
-                .collect(Collectors.toList());
+                ).filter(Time::getAtivo).collect(Collectors.toList());
 
         
         int posicao = 1;
