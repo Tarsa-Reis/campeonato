@@ -14,17 +14,20 @@ import java.util.stream.Collectors;
 import com.mycompany.trabalho.dao.PartidaDAO;
 import com.mycompany.trabalho.model.Partida;
 import com.mycompany.trabalho.dao.ColocacaoDAO;
+import com.mycompany.trabalho.dao.JogadorDAO;
 
 public class TimeService {
 
     private TimeDAO timeDAO;
     private PartidaDAO partidaDAO;
     private ColocacaoDAO colocacaoDAO;
+    private JogadorDAO jogadorDAO;
 
     public TimeService(EntityManager em) {
         this.timeDAO = new TimeDAO(em);
         this.partidaDAO = new PartidaDAO(em);
         this.colocacaoDAO = new ColocacaoDAO(em);
+        this.jogadorDAO = new JogadorDAO(em);
     }
 
     public void adicionarTime(String nome) {
@@ -78,12 +81,17 @@ public class TimeService {
             System.out.println("Time não encontrado.");
         }
     }
+    
 
     public void removerTime(Long id) {
         List<Partida> partidas = partidaDAO.listarTodas();
         List<Partida> partidasFiltradas = partidas.stream().filter(partida -> partida.getTimeCasa().getId().equals(id) || partida.getTimeVisitante().getId().equals(id)).collect(Collectors.toList());
         for(int i=0; i < partidasFiltradas.size();i++){
             partidaDAO.remover(partidasFiltradas.get(i).getId());
+        }
+        List<Jogador> jogadores = timeDAO.buscarPorId(id).getJogadores();
+        for(int i=0; i < jogadores.size();i++){
+            jogadorDAO.remover(jogadores.get(i).getId());
         }
         colocacaoDAO.limparTabela();
         timeDAO.remover(id);

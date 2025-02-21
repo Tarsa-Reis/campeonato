@@ -14,7 +14,7 @@ public class Expulsao {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "jogador_id", nullable = false)
+    @JoinColumn(name = "jogador_id", nullable = false, updatable = true)
     private Jogador jogador;
 
     @ManyToOne

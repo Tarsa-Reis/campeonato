@@ -608,7 +608,7 @@ public class Trabalho{
                 System.out.println("   Gols Casa: " + partida.getGolsCasa());
                 System.out.println("   Gols Visitante: " + partida.getGolsVisitante());
                 System.out.println("   Vencedor: " + (partida.getVencedor() != null ? partida.getVencedor().getNome() : "Empate"));
-                System.out.println("/n/n/n/n");
+                System.out.println("\n\n");
             }
 
             System.out.println("Escolha a partida para excluir:");
