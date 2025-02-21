@@ -6,6 +6,7 @@ package com.mycompany.trabalho.service;
  */
 
 import com.mycompany.trabalho.dao.PartidaDAO;
+import com.mycompany.trabalho.dao.JogadorDAO;
 import com.mycompany.trabalho.model.Partida;
 import com.mycompany.trabalho.model.Time;
 import com.mycompany.trabalho.model.Jogador;
@@ -15,9 +16,11 @@ import java.util.List;
 public class PartidaService {
 
     private PartidaDAO partidaDAO;
+    private JogadorDAO jogadorDAO;
 
     public PartidaService(EntityManager em) {
         this.partidaDAO = new PartidaDAO(em);
+        this.jogadorDAO = new JogadorDAO(em);
     }
 
     public void adicionarPartida(Time timeCasa, Time timeVisitante, Integer golsCasa, Integer golsVisitante,
@@ -47,6 +50,12 @@ public class PartidaService {
     }
 
     public void removerPartida(Long id) {
+        Partida partida = partidaDAO.buscarPorId(id);
+        List<Jogador> jogadores = partida.getJogadoresGols();
+        for(int i =0; i < jogadores.size();i++){
+            jogadores.get(i).setGols(jogadores.get(i).getGols()-1);
+            jogadorDAO.atualizar(jogadores.get(i));
+        }
         partidaDAO.remover(id);
     }
 }
