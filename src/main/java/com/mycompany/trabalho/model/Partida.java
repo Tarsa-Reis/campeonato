@@ -53,6 +53,8 @@ public class Partida {
         this.jogadoresGols = jogadoresGols;
         this.jogadoresEmCampo = jogadoresEmCampo;
     }
+    
+    //funcionando
 
     
     public Long getId() {
