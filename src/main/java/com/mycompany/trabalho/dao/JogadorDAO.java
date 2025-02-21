@@ -82,3 +82,5 @@ public class JogadorDAO {
         em.getTransaction().commit();
     }
 }
+
+///teste
